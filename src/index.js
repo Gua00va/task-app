@@ -1,11 +1,11 @@
 const express = require('express');
 const connectToMongo = require('./database/db');
-require('dotenv').config();
+
 
 connectToMongo();
 
 const app = express();
-const port = process.env.PORT
+const port = process.env.PORT 
 
 app.use(express.json())
 //Routes
