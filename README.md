@@ -1,6 +1,6 @@
 # task-app
 
-POSTMAN URLs to run the api
+POSTMAN URLs to run the api, 
 set auth to bearer token and set the token as {{authToken}}
 In Create User and Login routes set Test command as:
 
