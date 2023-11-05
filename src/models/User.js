@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
 const { Schema } = mongoose;
 const Task = require('../models/Task.js');
+const path = require('path');
+require('dotenv').config({path: path.resolve(__dirname, '../vars/.env')});
 
 const UserSchema = new Schema({
     name: {
