@@ -54,12 +54,17 @@ const UserSchema = new Schema({
     timestamps: true
 });
 
+
+
+//virtual field to populate user tasks
 UserSchema.virtual('tasks', {
     ref: 'Task',
     localField: '_id',
     foreignField: 'owner'
 })
 
+
+// methods on user instance
 UserSchema.methods.toJSON = function ()  {
     const user = this
     let userObject = user.toObject();
