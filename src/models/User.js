@@ -10,7 +10,7 @@ require('dotenv').config({path: path.resolve(__dirname, '../vars/.env')});
 const UserSchema = new Schema({
     name: {
         type: String,
-        requiired: true,
+        required: true,
         trim: true
     },
     email: {
@@ -70,43 +70,43 @@ UserSchema.virtual('tasks', {
 UserSchema.methods.toJSON = function ()  {
     const user = this
     let userObject = user.toObject();
-
+    
     delete userObject.password;
     delete userObject.tokens;
     delete userObject.avatar;
-
+    
     return userObject;
 }
 
 UserSchema.methods.generateAuthToken = async function () {
     const user = this;
     const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET)
-
+    
     user.tokens = user.tokens.concat({ token })
     await user.save()
-
+    
     return token
 }
 
-UserSchema.statics.findByCredentials = async (email,password)=> {
-    const user = await UserSchema.findOne({ email })
-
+UserSchema.statics.findByCredentials = async function (email,password) {
+    const user = await User.findOne({ email });
+    
     if (!user) {
         throw new Error('Unable to login')
     }
-
+    
     const isMatch = await bcrypt.compare(password, user.password)
-
+    
     if (!isMatch) {
         throw new Error('Unable to login')
     }
-
+    
     return user
 }
 
 UserSchema.pre('save', async function (next) {
     const user = this;
-
+    
     if(user.isModified('password')) {
         user.password = await bcrypt.hash(user.password, 8);
     }
@@ -120,4 +120,5 @@ UserSchema.pre('remove', async function (next){
     next();
 })
 
-module.exports =  mongoose.model('User', UserSchema)
+const User = mongoose.model('User', UserSchema); 
+module.exports = { User }
