@@ -38,6 +38,10 @@ const UserSchema = new Schema({
             }
         }
     },
+    c : {
+        type: Schema.Types.ObjectId, ref: 'Task', 
+    },
+    
     tokens: [{
         token: {
         type: String,

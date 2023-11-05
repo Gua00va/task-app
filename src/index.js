@@ -1,16 +1,34 @@
 const express = require("express");
 const connectToMongo = require("./database/db");
+const cluster = require("cluster");
+const numCpus = require('os').cpus.length;
 
-connectToMongo();
 
-const app = express();
-const port = process.env.PORT || 3000;
+// Server Optimization Using Cluster
+if(cluster.isMaster) {
+    console.log(`Master ${process.pid} is running`);
 
-app.use(express.json());
-//Routes
-app.use("/api", require("./routes/users"));
-app.use("/api", require("./routes/tasks"));
+    for(let i = 0; i<numCpus; i++) {
+      cluster.fork();
+    }
 
-app.listen(port, () => {
-  console.log("Server is running on port " + port);
-});
+    cluster.on('exit', (worker, code, signal) => {
+      console.log(`Worker ${worker.process.pid} died`);
+    })
+}  else {
+  connectToMongo();
+
+  const app = express();
+  const port = process.env.PORT;
+  
+  app.use(express.json());
+  //Routes
+  app.use("/api", require("./routes/users"));
+  app.use("/api", require("./routes/tasks"));
+  
+  app.listen(port, () => {
+    console.log("Server is running on port " + port);
+  });
+}
+
+
