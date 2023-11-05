@@ -1,14 +1,17 @@
 const express = require("express");
 const connectToMongo = require("./database/db");
 const cluster = require("cluster");
-const numCpus = require('os').cpus.length;
-
+const os = require('os');
+const numCpus = os.cpus().length;
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, './vars/.env') })
 
 // Server Optimization Using Cluster
 if(cluster.isMaster) {
+    // console.log(numCpus);
     console.log(`Master ${process.pid} is running`);
 
-    for(let i = 0; i<numCpus; i++) {
+    for(let i = 0; i < numCpus; i++) {
       cluster.fork();
     }
 
@@ -17,7 +20,6 @@ if(cluster.isMaster) {
     })
 }  else {
   connectToMongo();
-
   const app = express();
   const port = process.env.PORT;
   
